@@ -46,21 +46,22 @@
 
 ---
 
-## 📁 目录结构
+📁 目录结构
 
 工具/
-├── Tool/ # ffmpeg 存放目录（需自行放入 ffmpeg.exe）
-├── Form1.cs # 主窗体代码
-├── Form1.Designer.cs # 主窗体设计器代码
-├── Form1.resx # 主窗体资源文件
-├── BilibiliParser.cs # B站解析核心
-├── Program.cs # 程序入口
-├── App.config # 配置文件
-├── packages.config # NuGet 包配置
-├── 工具.csproj # 项目文件
-└── Properties/ # 项目属性文件夹
-└── AssemblyInfo.cs
-
+├── Tool/                          # ffmpeg 存放目录（需自行放入 ffmpeg.exe）
+├── Form1.cs                       # 主窗体代码
+├── Form1.Designer.cs              # 主窗体设计器代码
+├── Form1.resx                     # 主窗体资源文件
+├── BilibiliParser.cs              # B站解析核心
+├── Program.cs                     # 程序入口
+├── App.config                     # 配置文件
+├── packages.config                # NuGet 包配置
+├── 工具.csproj                    # 项目文件
+├── 工具.sln                       # 解决方案文件
+└── Properties/                    # 项目属性文件夹
+    └── AssemblyInfo.cs
+    
 ---
 
 ## 🧩 技术栈
