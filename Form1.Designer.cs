@@ -33,6 +33,7 @@
             this.video = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.index = new System.Windows.Forms.Panel();
+            this.music_dw_index = new System.Windows.Forms.Button();
             this.resolve_B = new System.Windows.Forms.Button();
             this.imge = new System.Windows.Forms.Panel();
             this.ima_1 = new System.Windows.Forms.Button();
@@ -62,30 +63,38 @@
             this.vid_bu1 = new System.Windows.Forms.Button();
             this.vid_bu = new System.Windows.Forms.Button();
             this.resolve = new System.Windows.Forms.Panel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
+            this.res_dwn = new System.Windows.Forms.Button();
+            this.comboBox5 = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.res_del_button = new System.Windows.Forms.Button();
             this.res_button = new System.Windows.Forms.Button();
             this.res = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.comboBox5 = new System.Windows.Forms.ComboBox();
-            this.res_dwn = new System.Windows.Forms.Button();
-            this.checkedListBox1 = new System.Windows.Forms.CheckedListBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
+            this.music_dw = new System.Windows.Forms.Panel();
+            this.sousuo = new System.Windows.Forms.Button();
+            this.m_dw_b = new System.Windows.Forms.Button();
+            this.m_B_index = new System.Windows.Forms.Button();
+            this.listBox4 = new System.Windows.Forms.ListBox();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
             this.index.SuspendLayout();
             this.imge.SuspendLayout();
             this.radio.SuspendLayout();
             this.video_P.SuspendLayout();
             this.resolve.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.music_dw.SuspendLayout();
             this.SuspendLayout();
             // 
             // image
             // 
             this.image.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.image.Location = new System.Drawing.Point(140, 243);
+            this.image.Location = new System.Drawing.Point(119, 182);
             this.image.Name = "image";
             this.image.Size = new System.Drawing.Size(80, 34);
             this.image.TabIndex = 0;
@@ -97,7 +106,7 @@
             // redio
             // 
             this.redio.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.redio.Location = new System.Drawing.Point(280, 243);
+            this.redio.Location = new System.Drawing.Point(259, 182);
             this.redio.Name = "redio";
             this.redio.Size = new System.Drawing.Size(80, 34);
             this.redio.TabIndex = 1;
@@ -109,7 +118,7 @@
             // video
             // 
             this.video.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.video.Location = new System.Drawing.Point(420, 243);
+            this.video.Location = new System.Drawing.Point(399, 182);
             this.video.Name = "video";
             this.video.Size = new System.Drawing.Size(80, 34);
             this.video.TabIndex = 2;
@@ -122,7 +131,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("微软雅黑", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(247, 100);
+            this.label1.Location = new System.Drawing.Point(226, 80);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(146, 41);
             this.label1.TabIndex = 3;
@@ -131,6 +140,7 @@
             // 
             // index
             // 
+            this.index.Controls.Add(this.music_dw_index);
             this.index.Controls.Add(this.resolve_B);
             this.index.Controls.Add(this.image);
             this.index.Controls.Add(this.redio);
@@ -142,10 +152,22 @@
             this.index.TabIndex = 4;
             this.index.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
+            // music_dw_index
+            // 
+            this.music_dw_index.Font = new System.Drawing.Font("宋体", 18F);
+            this.music_dw_index.Location = new System.Drawing.Point(232, 298);
+            this.music_dw_index.Name = "music_dw_index";
+            this.music_dw_index.Size = new System.Drawing.Size(131, 34);
+            this.music_dw_index.TabIndex = 5;
+            this.music_dw_index.TabStop = false;
+            this.music_dw_index.Text = "音乐下载";
+            this.music_dw_index.UseVisualStyleBackColor = true;
+            this.music_dw_index.Click += new System.EventHandler(this.music_dw_index_Click);
+            // 
             // resolve_B
             // 
             this.resolve_B.Font = new System.Drawing.Font("宋体", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.resolve_B.Location = new System.Drawing.Point(280, 329);
+            this.resolve_B.Location = new System.Drawing.Point(261, 240);
             this.resolve_B.Name = "resolve_B";
             this.resolve_B.Size = new System.Drawing.Size(80, 34);
             this.resolve_B.TabIndex = 4;
@@ -206,6 +228,7 @@
             // 
             // comboBox1
             // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Items.AddRange(new object[] {
@@ -323,6 +346,7 @@
             // 
             // comboBox2
             // 
+            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox2.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Items.AddRange(new object[] {
@@ -418,6 +442,7 @@
             // 
             // comboBox3
             // 
+            this.comboBox3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox3.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.comboBox3.FormattingEnabled = true;
             this.comboBox3.Items.AddRange(new object[] {
@@ -501,6 +526,74 @@
             this.resolve.TabIndex = 5;
             this.resolve.Visible = false;
             // 
+            // label6
+            // 
+            this.label6.Location = new System.Drawing.Point(36, 97);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(563, 41);
+            this.label6.TabIndex = 21;
+            this.label6.Text = "注:在使用音轨视频分开功能时建议选中单个视频再进行操作。不建议在同时选中2个以上视频时使用音轨与视频分开功能，虽然在测试中运行正常，但该功能未经过严格的压力测试，" +
+    "这可能会导致不可预料的BUG\r\n";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("宋体", 18F);
+            this.label5.Location = new System.Drawing.Point(68, 214);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(118, 24);
+            this.label5.TabIndex = 20;
+            this.label5.Text = "视频标题:";
+            this.label5.Click += new System.EventHandler(this.label5_Click);
+            // 
+            // checkedListBox1
+            // 
+            this.checkedListBox1.FormattingEnabled = true;
+            this.checkedListBox1.Location = new System.Drawing.Point(156, 266);
+            this.checkedListBox1.Name = "checkedListBox1";
+            this.checkedListBox1.Size = new System.Drawing.Size(318, 148);
+            this.checkedListBox1.TabIndex = 19;
+            this.checkedListBox1.SelectedIndexChanged += new System.EventHandler(this.checkedListBox1_SelectedIndexChanged);
+            // 
+            // res_dwn
+            // 
+            this.res_dwn.Font = new System.Drawing.Font("宋体", 18F);
+            this.res_dwn.Location = new System.Drawing.Point(480, 266);
+            this.res_dwn.Name = "res_dwn";
+            this.res_dwn.Size = new System.Drawing.Size(132, 37);
+            this.res_dwn.TabIndex = 18;
+            this.res_dwn.Text = "下载";
+            this.res_dwn.UseVisualStyleBackColor = true;
+            this.res_dwn.Click += new System.EventHandler(this.res_dwn_Click);
+            // 
+            // comboBox5
+            // 
+            this.comboBox5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox5.Font = new System.Drawing.Font("宋体", 9F);
+            this.comboBox5.FormattingEnabled = true;
+            this.comboBox5.Location = new System.Drawing.Point(480, 309);
+            this.comboBox5.Name = "comboBox5";
+            this.comboBox5.Size = new System.Drawing.Size(132, 20);
+            this.comboBox5.TabIndex = 17;
+            this.comboBox5.SelectedIndexChanged += new System.EventHandler(this.comboBox5_SelectedIndexChanged);
+            // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("微软雅黑", 8F);
+            this.label4.Location = new System.Drawing.Point(188, 221);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(429, 36);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "视频标题";
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Location = new System.Drawing.Point(12, 266);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(140, 140);
+            this.pictureBox1.TabIndex = 14;
+            this.pictureBox1.TabStop = false;
+            // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
@@ -556,83 +649,97 @@
             this.label3.TabIndex = 0;
             this.label3.Text = "视频解析";
             // 
-            // pictureBox1
+            // music_dw
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(12, 266);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(140, 140);
-            this.pictureBox1.TabIndex = 14;
-            this.pictureBox1.TabStop = false;
+            this.music_dw.Controls.Add(this.sousuo);
+            this.music_dw.Controls.Add(this.m_dw_b);
+            this.music_dw.Controls.Add(this.m_B_index);
+            this.music_dw.Controls.Add(this.listBox4);
+            this.music_dw.Controls.Add(this.textBox1);
+            this.music_dw.Controls.Add(this.label7);
+            this.music_dw.Location = new System.Drawing.Point(0, 0);
+            this.music_dw.Name = "music_dw";
+            this.music_dw.Size = new System.Drawing.Size(626, 442);
+            this.music_dw.TabIndex = 5;
+            this.music_dw.Paint += new System.Windows.Forms.PaintEventHandler(this.music_dw_Paint);
             // 
-            // label4
+            // sousuo
             // 
-            this.label4.Font = new System.Drawing.Font("微软雅黑", 8F);
-            this.label4.Location = new System.Drawing.Point(188, 221);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(429, 36);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "视频标题";
+            this.sousuo.Font = new System.Drawing.Font("宋体", 18F);
+            this.sousuo.Location = new System.Drawing.Point(498, 99);
+            this.sousuo.Name = "sousuo";
+            this.sousuo.Size = new System.Drawing.Size(80, 34);
+            this.sousuo.TabIndex = 10;
+            this.sousuo.Text = "搜索";
+            this.sousuo.UseVisualStyleBackColor = true;
+            this.sousuo.Click += new System.EventHandler(this.sousuo_Click);
             // 
-            // comboBox5
+            // m_dw_b
             // 
-            this.comboBox5.Font = new System.Drawing.Font("宋体", 9F);
-            this.comboBox5.FormattingEnabled = true;
-            this.comboBox5.Location = new System.Drawing.Point(480, 309);
-            this.comboBox5.Name = "comboBox5";
-            this.comboBox5.Size = new System.Drawing.Size(132, 20);
-            this.comboBox5.TabIndex = 17;
-            this.comboBox5.SelectedIndexChanged += new System.EventHandler(this.comboBox5_SelectedIndexChanged);
+            this.m_dw_b.Font = new System.Drawing.Font("宋体", 18F);
+            this.m_dw_b.Location = new System.Drawing.Point(498, 139);
+            this.m_dw_b.Name = "m_dw_b";
+            this.m_dw_b.Size = new System.Drawing.Size(80, 34);
+            this.m_dw_b.TabIndex = 9;
+            this.m_dw_b.Text = "下载";
+            this.m_dw_b.UseVisualStyleBackColor = true;
+            this.m_dw_b.Click += new System.EventHandler(this.m_dw_b_Click);
             // 
-            // res_dwn
+            // m_B_index
             // 
-            this.res_dwn.Font = new System.Drawing.Font("宋体", 18F);
-            this.res_dwn.Location = new System.Drawing.Point(480, 266);
-            this.res_dwn.Name = "res_dwn";
-            this.res_dwn.Size = new System.Drawing.Size(132, 37);
-            this.res_dwn.TabIndex = 18;
-            this.res_dwn.Text = "下载";
-            this.res_dwn.UseVisualStyleBackColor = true;
-            this.res_dwn.Click += new System.EventHandler(this.res_dwn_Click);
+            this.m_B_index.Font = new System.Drawing.Font("微软雅黑", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.m_B_index.Location = new System.Drawing.Point(64, 117);
+            this.m_B_index.Name = "m_B_index";
+            this.m_B_index.Size = new System.Drawing.Size(75, 38);
+            this.m_B_index.TabIndex = 8;
+            this.m_B_index.TabStop = false;
+            this.m_B_index.Text = "返回";
+            this.m_B_index.UseVisualStyleBackColor = true;
+            this.m_B_index.Click += new System.EventHandler(this.m_B_index_Click);
             // 
-            // checkedListBox1
+            // listBox4
             // 
-            this.checkedListBox1.FormattingEnabled = true;
-            this.checkedListBox1.Location = new System.Drawing.Point(156, 266);
-            this.checkedListBox1.Name = "checkedListBox1";
-            this.checkedListBox1.Size = new System.Drawing.Size(318, 148);
-            this.checkedListBox1.TabIndex = 19;
-            this.checkedListBox1.SelectedIndexChanged += new System.EventHandler(this.checkedListBox1_SelectedIndexChanged);
+            this.listBox4.Font = new System.Drawing.Font("宋体", 10F);
+            this.listBox4.FormattingEnabled = true;
+            this.listBox4.HorizontalScrollbar = true;
+            this.listBox4.Location = new System.Drawing.Point(64, 179);
+            this.listBox4.Name = "listBox4";
+            this.listBox4.ScrollAlwaysVisible = true;
+            this.listBox4.Size = new System.Drawing.Size(514, 238);
+            this.listBox4.TabIndex = 4;
+            this.listBox4.SelectedIndexChanged += new System.EventHandler(this.listBox4_SelectedIndexChanged);
             // 
-            // label5
+            // textBox1
             // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("宋体", 18F);
-            this.label5.Location = new System.Drawing.Point(68, 214);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(118, 24);
-            this.label5.TabIndex = 20;
-            this.label5.Text = "视频标题:";
-            this.label5.Click += new System.EventHandler(this.label5_Click);
+            this.textBox1.Font = new System.Drawing.Font("宋体", 18F);
+            this.textBox1.Location = new System.Drawing.Point(177, 117);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(282, 35);
+            this.textBox1.TabIndex = 1;
+            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged_1);
             // 
-            // label6
+            // label7
             // 
-            this.label6.Location = new System.Drawing.Point(36, 97);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(563, 41);
-            this.label6.TabIndex = 21;
-            this.label6.Text = "注:在使用音轨视频分开功能时建议选中单个视频再进行操作。不建议在同时选中2个以上视频时使用音轨与视频分开功能，虽然在测试中运行正常，但该功能未经过严格的压力测试，" +
-    "这可能会导致不可预料的BUG\r\n";
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("宋体", 18F);
+            this.label7.Location = new System.Drawing.Point(269, 48);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(106, 24);
+            this.label7.TabIndex = 0;
+            this.label7.Text = "音乐下载";
+            this.label7.Click += new System.EventHandler(this.label7_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(624, 441);
-            this.Controls.Add(this.resolve);
+            this.Controls.Add(this.music_dw);
             this.Controls.Add(this.index);
             this.Controls.Add(this.imge);
             this.Controls.Add(this.radio);
             this.Controls.Add(this.video_P);
+            this.Controls.Add(this.resolve);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(640, 480);
             this.MinimumSize = new System.Drawing.Size(640, 480);
@@ -651,6 +758,8 @@
             this.resolve.ResumeLayout(false);
             this.resolve.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.music_dw.ResumeLayout(false);
+            this.music_dw.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -703,6 +812,14 @@
         private System.Windows.Forms.CheckedListBox checkedListBox1;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Panel music_dw;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.ListBox listBox4;
+        private System.Windows.Forms.Button music_dw_index;
+        private System.Windows.Forms.Button m_B_index;
+        private System.Windows.Forms.Button m_dw_b;
+        private System.Windows.Forms.Button sousuo;
     }
 }
 
