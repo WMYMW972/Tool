@@ -84,9 +84,39 @@ namespace tool
 
         public override string ToString()
         {
-            string name = Name.Length > 25 ? Name.Substring(0, 25) : Name.PadRight(25);
-            string artist = Artist.Length > 15 ? Artist.Substring(0, 15) : Artist.PadRight(15);
-            return $"{name} {artist}";
+            // ========== 显示：歌曲名 - 歌手名 [专辑] ==========
+            if (!string.IsNullOrEmpty(Album))
+            {
+                // 专辑名如果太长，截断一下
+                string albumDisplay = Album.Length > 20 ? Album.Substring(0, 20) + "..." : Album;
+                return $"{Name} - {Artist}  [{albumDisplay}]";
+            }
+            return $"{Name} - {Artist}";
+        }
+
+        public string GetFullInfo()
+        {
+            string info = $"歌曲: {Name}";
+            if (!string.IsNullOrEmpty(Artist))
+                info += $"\n歌手: {Artist}";
+            if (!string.IsNullOrEmpty(Album))
+                info += $"\n专辑: {Album}";
+            if (!string.IsNullOrEmpty(Duration))
+            {
+                // 时长格式转换（毫秒 → 分:秒）
+                if (int.TryParse(Duration, out int ms))
+                {
+                    int totalSeconds = ms / 1000;
+                    int minutes = totalSeconds / 60;
+                    int seconds = totalSeconds % 60;
+                    info += $"\n时长: {minutes:D2}:{seconds:D2}";
+                }
+                else
+                {
+                    info += $"\n时长: {Duration}";
+                }
+            }
+            return info;
         }
     }
 }

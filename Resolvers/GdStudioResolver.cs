@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -50,25 +51,76 @@ namespace tool.Resolvers
             var result = new List<SongInfo>();
             try
             {
-                string url = $"https://music-api.gdstudio.xyz/api.php?types=search&source=netease&name={keyword}&count=30";
+                string encodedKeyword = System.Web.HttpUtility.UrlEncode(keyword);
+                string url = $"https://music-api.gdstudio.xyz/api.php?types=search&source=netease&name={encodedKeyword}&count=30";
 
                 var response = await _httpClient.GetStringAsync(url);
                 var array = JArray.Parse(response);
 
                 foreach (var item in array)
                 {
+                    string name = item["name"]?.ToString() ?? "";
+
+                    string artist = "";
+                    var artistToken = item["artist"];
+                    if (artistToken != null)
+                    {
+                        if (artistToken.Type == JTokenType.Array)
+                        {
+                            var firstArtist = artistToken.FirstOrDefault();
+                            artist = firstArtist?.ToString() ?? "";
+                        }
+                        else
+                        {
+                            artist = artistToken.ToString();
+                        }
+                    }
+
+                    string album = item["album"]?.ToString() ?? "";
+                    string duration = item["duration"]?.ToString() ?? "";
+
+                    // 清理数据
+                    artist = CleanText(artist);
+                    album = CleanText(album);
+
+                    if (string.IsNullOrEmpty(name) || name.Length < 2)
+                        continue;
+
                     result.Add(new SongInfo
                     {
                         Id = item["id"]?.ToString() ?? "",
-                        Name = item["name"]?.ToString() ?? "未知歌曲",
-                        Artist = item["artist"]?.ToString() ?? "未知歌手",
-                        Album = item["album"]?.ToString() ?? "",
-                        Duration = item["duration"]?.ToString() ?? ""
+                        Name = name,
+                        Artist = artist,
+                        Album = album,
+                        Duration = duration
                     });
                 }
             }
             catch { }
             return result;
+        }
+
+        // 辅助方法：清理文本中的括号和引号（静态方法）
+        private static string CleanText(string text)
+        {
+            if (string.IsNullOrEmpty(text))
+                return "";
+
+            // 去掉 JSON 数组格式：["Michael Jackson"] → Michael Jackson
+            if (text.StartsWith("[\"") && text.EndsWith("\"]"))
+            {
+                text = text.Substring(2, text.Length - 4);
+            }
+            // 去掉普通括号：[Michael Jackson] → Michael Jackson
+            else if (text.StartsWith("[") && text.EndsWith("]"))
+            {
+                text = text.Substring(1, text.Length - 2);
+            }
+
+            // 去掉多余的引号
+            text = text.Replace("\"", "");
+
+            return text.Trim();
         }
     }
 }

@@ -4,6 +4,7 @@ using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -53,6 +54,21 @@ namespace tool
             return Path.Combine(Application.StartupPath, "Tool", "ffmpeg.exe");
         }
 
+        /// <summary>
+        /// 获取 ffmpeg 错误信息的最后几行
+        /// </summary>
+        private string GetLastErrorLines(string errorMsg, int lineCount = 5)
+        {
+            if (string.IsNullOrEmpty(errorMsg))
+                return "无详细错误信息";
+
+            string[] lines = errorMsg.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            if (lines.Length <= lineCount)
+                return errorMsg;
+
+            return string.Join(Environment.NewLine, lines.Skip(lines.Length - lineCount));
+        }
+
         // ======================== 构造函数和加载事件 ========================
 
         public Form1()
@@ -64,7 +80,80 @@ namespace tool
         private BilibiliParser _parser = new BilibiliParser();
         private MusicParser _musicParser = new MusicParser();
         private List<SongInfo> _currentSongs = new List<SongInfo>();
+        private ToolTip toolTip = new ToolTip();
+        // 放在 Form1 类的合适位置（比如在 sousuo_Click 方法附近）
 
+        private void listBox4_MouseMove(object sender, MouseEventArgs e)
+        {
+            int index = listBox4.IndexFromPoint(e.Location);
+            if (index >= 0 && index < listBox4.Items.Count)
+            {
+                var song = listBox4.Items[index] as SongInfo;
+                if (song != null)
+                {
+                    string tooltipText = song.GetFullInfo();
+                    toolTip.SetToolTip(listBox4, tooltipText);
+                }
+            }
+            else
+            {
+                toolTip.SetToolTip(listBox4, "鼠标悬停查看完整信息");
+            }
+        }
+
+        // 计算每一项的高度（自动换行）
+        /* private void listBox4_MeasureItem(object sender, MeasureItemEventArgs e)
+         {
+             if (e.Index < 0 || e.Index >= listBox4.Items.Count) return;
+
+             var song = listBox4.Items[e.Index] as SongInfo;
+             if (song == null) return;
+
+             using (var font = new Font("宋体", 10))
+             {
+                 string text = $"{song.Name} - {song.Artist}";
+                 if (!string.IsNullOrEmpty(song.Album))
+                     text += $"  [{song.Album}]";
+
+                 // 使用 System.Drawing.SizeF 明确指定
+                 System.Drawing.SizeF size = e.Graphics.MeasureString(text, font, listBox4.Width - 20);
+                 e.ItemHeight = (int)Math.Ceiling(size.Height) + 6;
+             }
+         }
+
+         // 自定义绘制每一项
+         private void listBox4_DrawItem(object sender, DrawItemEventArgs e)
+         {
+             if (e.Index < 0 || e.Index >= listBox4.Items.Count) return;
+
+             var song = listBox4.Items[e.Index] as SongInfo;
+             if (song == null) return;
+
+             // 背景
+             e.DrawBackground();
+
+             // 判断是否选中
+             bool isSelected = (e.State & DrawItemState.Selected) == DrawItemState.Selected;
+             using (var brush = new SolidBrush(isSelected ? SystemColors.HighlightText : e.ForeColor))
+             using (var font = new Font("宋体", 10))
+             {
+                 // 构建显示文本（包含专辑）
+                 string text = $"{song.Name} - {song.Artist}";
+                 if (!string.IsNullOrEmpty(song.Album))
+                     text += $"  [{song.Album}]";
+
+                 // 使用 System.Drawing.Rectangle 明确指定
+                 System.Drawing.Rectangle rect = e.Bounds;
+                 rect.X += 4;
+                 rect.Width -= 8;
+                 rect.Y += 2;
+
+                 e.Graphics.DrawString(text, font, brush, rect);
+             }
+
+             e.DrawFocusRectangle();
+         }
+        */
         private void Form1_Load(object sender, EventArgs e)
         {
             SetCueBanner(res, "粘贴B站视频链接...");
@@ -92,6 +181,12 @@ namespace tool
 
             // 固定 label7 标题
             label7.Text = "音乐下载";
+
+            // ========== 简单模式：单行显示 + 水平滚动 ==========
+            listBox4.HorizontalScrollbar = true;
+
+            // 确保是默认绘制模式（单行）
+            listBox4.DrawMode = DrawMode.Normal;
         }
 
         // ======================== 页面切换事件 ========================
@@ -151,6 +246,23 @@ namespace tool
 
         private void m_B_index_Click(object sender, EventArgs e)
         {
+            // ========== 如果有搜索结果，询问是否保留 ==========
+            if (listBox4.Items.Count > 0)
+            {
+                DialogResult result = MessageBox.Show("当前有搜索结果，返回首页是否保留结果？\n\n点击「是」保留结果\n点击「否」清空结果", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.No)
+                {
+                    // 清空结果
+                    listBox4.Items.Clear();
+                    _currentSongs.Clear();
+                    textBox1.Clear();  // 清空搜索框
+                                       // 禁用 ToolTip
+                    listBox4.MouseMove -= listBox4_MouseMove;
+                    toolTip.SetToolTip(listBox4, "");
+                }
+                // 点击「是」则保留结果，什么都不做
+            }
+
             index.Visible = true;
             imge.Visible = false;
             radio.Visible = false;
@@ -293,6 +405,13 @@ namespace tool
                         string nameWithoutExt = Path.GetFileNameWithoutExtension(filePaths[i]);
                         string savePath = Path.Combine(saveFolder, nameWithoutExt + "." + targetFormat.ToLower());
 
+                        // 防止输出文件覆盖输入文件
+                        if (string.Equals(savePath, filePaths[i], StringComparison.OrdinalIgnoreCase))
+                        {
+                            string newName = nameWithoutExt + "_converted." + targetFormat.ToLower();
+                            savePath = Path.Combine(saveFolder, newName);
+                        }
+
                         switch (targetFormat)
                         {
                             case "JPG":
@@ -400,6 +519,7 @@ namespace tool
 
             string saveFolder = folderBrowserDialog1.SelectedPath;
             int successCount = 0;
+            List<string> tempFilesToDelete = new List<string>();
 
             for (int i = 0; i < audioFilePaths.Count; i++)
             {
@@ -413,7 +533,10 @@ namespace tool
                                         ext == ".webm" || ext == ".flv" || ext == ".wmv" || ext == ".m4v" ||
                                         ext == ".ts" || ext == ".mts" || ext == ".m2ts" || ext == ".3gp");
 
-                    if (ext == ".ncm")
+                    bool isNcmFile = (ext == ".ncm");
+                    string decryptedFile = null;
+
+                    if (isNcmFile)
                     {
                         string ncmdumpPath = Path.Combine(Application.StartupPath, "Tool", "ncmdump.exe");
 
@@ -449,7 +572,10 @@ namespace tool
                                                       .ToArray();
 
                         if (matches.Length > 0)
-                            currentPath = matches[0];
+                        {
+                            decryptedFile = matches[0];
+                            currentPath = decryptedFile;
+                        }
                         else
                         {
                             MessageBox.Show($"解密后找不到文件：{Path.GetFileName(currentPath)}");
@@ -459,6 +585,13 @@ namespace tool
 
                     string nameWithoutExt = Path.GetFileNameWithoutExtension(originalPath);
                     string savePath = Path.Combine(saveFolder, nameWithoutExt + "." + targetFormat);
+
+                    // 防止输出文件覆盖输入文件
+                    if (string.Equals(savePath, currentPath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        string newName = nameWithoutExt + "_converted." + targetFormat;
+                        savePath = Path.Combine(saveFolder, newName);
+                    }
 
                     string arguments;
 
@@ -535,7 +668,11 @@ namespace tool
                     using (System.Diagnostics.Process p = new System.Diagnostics.Process())
                     {
                         p.StartInfo = psi;
-                        p.ErrorDataReceived += (o, args) => errorMsg += args.Data + Environment.NewLine;
+                        p.ErrorDataReceived += (o, args) =>
+                        {
+                            if (!string.IsNullOrEmpty(args.Data))
+                                errorMsg += args.Data + Environment.NewLine;
+                        };
                         p.OutputDataReceived += (o, args) => { };
 
                         p.Start();
@@ -545,13 +682,20 @@ namespace tool
 
                         if (p.ExitCode != 0)
                         {
-                            MessageBox.Show($"ffmpeg 执行失败！\n退出码：{p.ExitCode}\n错误信息：{errorMsg}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            string shortError = GetLastErrorLines(errorMsg, 5);
+                            MessageBox.Show($"ffmpeg 执行失败！\n退出码：{p.ExitCode}\n错误信息：{shortError}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            continue;
                         }
                     }
 
-                    if (currentPath != originalPath && !isVideoFile)
+                    // 如果是NCM文件，解密后的临时文件标记为待删除
+                    if (isNcmFile && !string.IsNullOrEmpty(decryptedFile) && File.Exists(decryptedFile))
                     {
-                        try { File.Delete(currentPath); } catch { }
+                        // 如果解密后的文件就是保存路径，不删除
+                        if (!string.Equals(decryptedFile, savePath, StringComparison.OrdinalIgnoreCase))
+                        {
+                            tempFilesToDelete.Add(decryptedFile);
+                        }
                     }
 
                     successCount++;
@@ -560,6 +704,12 @@ namespace tool
                 {
                     MessageBox.Show($"处理 {Path.GetFileName(audioFilePaths[i])} 失败：{ex.Message}");
                 }
+            }
+
+            // 删除临时文件
+            foreach (string tempFile in tempFilesToDelete)
+            {
+                try { File.Delete(tempFile); } catch { }
             }
 
             MessageBox.Show($"转换完成！成功 {successCount} 个文件。");
@@ -685,17 +835,46 @@ namespace tool
                     string nameWithoutExt = Path.GetFileNameWithoutExtension(videoFilePaths[i]);
                     string savePath = Path.Combine(saveFolder, nameWithoutExt + "." + targetFormat);
 
+                    // 防止输出文件覆盖输入文件
+                    if (string.Equals(savePath, videoFilePaths[i], StringComparison.OrdinalIgnoreCase))
+                    {
+                        string newName = nameWithoutExt + "_converted." + targetFormat;
+                        savePath = Path.Combine(saveFolder, newName);
+                    }
+
                     System.Diagnostics.ProcessStartInfo psi = new System.Diagnostics.ProcessStartInfo
                     {
                         FileName = ffmpeg,
                         Arguments = $"-i \"{videoFilePaths[i]}\" -y \"{savePath}\"",
                         CreateNoWindow = true,
-                        UseShellExecute = false
+                        UseShellExecute = false,
+                        RedirectStandardError = true,
+                        RedirectStandardOutput = true
                     };
 
-                    using (System.Diagnostics.Process p = System.Diagnostics.Process.Start(psi))
+                    string errorMsg = "";
+
+                    using (System.Diagnostics.Process p = new System.Diagnostics.Process())
                     {
+                        p.StartInfo = psi;
+                        p.ErrorDataReceived += (o, args) =>
+                        {
+                            if (!string.IsNullOrEmpty(args.Data))
+                                errorMsg += args.Data + Environment.NewLine;
+                        };
+                        p.OutputDataReceived += (o, args) => { };
+
+                        p.Start();
+                        p.BeginErrorReadLine();
+                        p.BeginOutputReadLine();
                         p.WaitForExit();
+
+                        if (p.ExitCode != 0)
+                        {
+                            string shortError = GetLastErrorLines(errorMsg, 5);
+                            MessageBox.Show($"ffmpeg 执行失败！\n退出码：{p.ExitCode}\n错误信息：{shortError}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            continue;
+                        }
                     }
 
                     successCount++;
@@ -767,7 +946,34 @@ namespace tool
             }
             return name;
         }
+        // 辅助方法：清理搜索关键词
+        private string CleanSearchKeyword(string keyword)
+        {
+            if (string.IsNullOrEmpty(keyword))
+                return keyword;
 
+            keyword = keyword.Trim();
+            keyword = System.Text.RegularExpressions.Regex.Replace(keyword, @"\s+", " ");
+
+            // 歌手 - 歌曲 格式只保留歌曲名
+            if (keyword.Contains(" - "))
+            {
+                string[] parts = keyword.Split(new[] { " - " }, StringSplitOptions.None);
+                if (parts.Length >= 2 && !string.IsNullOrEmpty(parts[1].Trim()))
+                {
+                    keyword = parts[1].Trim();
+                }
+            }
+
+            // 去掉括号内容
+            keyword = System.Text.RegularExpressions.Regex.Replace(keyword, @"\s*\([^)]*\)", "");
+            keyword = System.Text.RegularExpressions.Regex.Replace(keyword, @"\s*（[^）]*）", "");
+
+            // 只过滤特殊符号，保留所有文字
+            keyword = System.Text.RegularExpressions.Regex.Replace(keyword, @"[^\p{L}\p{N}\s]", "");
+
+            return keyword.Trim();
+        }
         // ======================== B站解析相关 ========================
 
         private async void res_button_Click(object sender, EventArgs e)
@@ -1131,6 +1337,7 @@ namespace tool
         }
 
         // 搜索
+        // 搜索
         private async void sousuo_Click(object sender, EventArgs e)
         {
             string keyword = textBox1.Text.Trim();
@@ -1143,20 +1350,75 @@ namespace tool
             this.Cursor = Cursors.WaitCursor;
             sousuo.Enabled = false;
 
+            // ========== 搜索前：禁用 ToolTip ==========
+            listBox4.MouseMove -= listBox4_MouseMove;
+            toolTip.SetToolTip(listBox4, "");
+
             try
             {
-                var songs = await _musicParser.Search(keyword);
-                _currentSongs = songs;
+                List<SongInfo> songs = new List<SongInfo>();
 
+                // 清理关键词
+                string cleanedKeyword = CleanSearchKeyword(keyword);
+
+                // 策略1：原词搜索
+                songs = await _musicParser.Search(cleanedKeyword);
+
+                // 策略2：如果没结果，去掉所有空格
+                if (songs.Count == 0 && cleanedKeyword.Contains(" "))
+                {
+                    string noSpaceKeyword = cleanedKeyword.Replace(" ", "");
+                    if (noSpaceKeyword != cleanedKeyword && noSpaceKeyword.Length >= 2)
+                    {
+                        songs = await _musicParser.Search(noSpaceKeyword);
+                    }
+                }
+
+                // 策略3：如果还没结果，只取第一个词
+                if (songs.Count == 0)
+                {
+                    string firstWord = cleanedKeyword.Split(' ').FirstOrDefault() ?? "";
+                    if (!string.IsNullOrEmpty(firstWord) && firstWord.Length >= 2 && firstWord != cleanedKeyword)
+                    {
+                        songs = await _musicParser.Search(firstWord);
+                    }
+                }
+
+                // 策略4：如果还没结果，尝试用 URL 编码后的关键词
+                if (songs.Count == 0 && cleanedKeyword.Contains(" "))
+                {
+                    string urlEncodedKeyword = System.Web.HttpUtility.UrlEncode(cleanedKeyword);
+                    songs = await _musicParser.Search(urlEncodedKeyword);
+                }
+
+                // ========== 如果已有搜索结果，询问是否清空 ==========
+                if (listBox4.Items.Count > 0 && songs.Count > 0)
+                {
+                    DialogResult result = MessageBox.Show("当前已有搜索结果，是否清空并显示新的结果？", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (result == DialogResult.No)
+                    {
+                        return;
+                    }
+                }
+
+                _currentSongs = songs;
                 listBox4.Items.Clear();
                 foreach (var song in songs)
                 {
                     listBox4.Items.Add(song);
                 }
 
-                if (songs.Count == 0)
+                // ========== 只有搜索结果不为空时才启用 ToolTip ==========
+                if (songs.Count > 0)
                 {
-                    MessageBox.Show("未找到相关歌曲", "提示");
+                    toolTip.SetToolTip(listBox4, "鼠标悬停查看完整信息");
+                    listBox4.MouseMove += listBox4_MouseMove;
+                }
+                else
+                {
+                    toolTip.SetToolTip(listBox4, "");
+                    listBox4.MouseMove -= listBox4_MouseMove;
+                    MessageBox.Show($"未找到相关歌曲 \"{keyword}\"\n\n💡 提示：\n• 检查歌曲名是否正确\n• 尝试只输入歌曲名（去掉歌手名）\n• 尝试输入部分关键词", "提示");
                 }
             }
             catch (Exception ex)

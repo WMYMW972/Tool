@@ -7,18 +7,22 @@ namespace tool
 {
     public class MusicResolverManager
     {
+        // ==================== 字段定义（只定义一次） ====================
         private readonly List<IMusicResolver> _resolvers;
         private readonly Dictionary<string, int> _failCount = new Dictionary<string, int>();
         private const int MAX_FAIL_COUNT = 3;
 
+        // ==================== 构造函数 ====================
         public MusicResolverManager()
         {
             _resolvers = new List<IMusicResolver>
             {
-                new Resolvers.GdStudioResolver()
+                new Resolvers.GdStudioResolver(),      // 主解析源
+                new Resolvers.NeteaseApiResolver()     // 备选解析源
             };
         }
 
+        // ==================== 获取歌曲URL ====================
         public async Task<string> GetSongUrl(string songId, int quality = 320)
         {
             var sorted = _resolvers
@@ -57,13 +61,25 @@ namespace tool
             return "";
         }
 
+        // ==================== 搜索歌曲 ====================
         public async Task<List<SongInfo>> Search(string keyword)
         {
-            var resolver = _resolvers.FirstOrDefault(r => r.IsAvailable);
-            if (resolver == null) return new List<SongInfo>();
-            return await resolver.Search(keyword);
+            // 先尝试 GdStudio（英文/中文效果好）
+            foreach (var resolver in _resolvers)
+            {
+                if (!resolver.IsAvailable) continue;
+                try
+                {
+                    var result = await resolver.Search(keyword);
+                    if (result != null && result.Count > 0)
+                        return result;
+                }
+                catch { }
+            }
+            return new List<SongInfo>();
         }
 
+        // ==================== 获取状态 ====================
         public string GetStatus()
         {
             return string.Join("\n", _resolvers.Select(r =>
